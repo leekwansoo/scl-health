@@ -1,0 +1,12 @@
+streamlit
+python-dotenv
+PyPDF2
+pymupdf
+openai
+langchain
+langchain-openai
+langchain-community
+langchain-core
+langchain-upstage
+langgraph
+faiss-cpu
