@@ -1,0 +1,6 @@
+streamlit
+PyPDF2
+PyPDF2
+pymupdf
+openai
+tiktoken
