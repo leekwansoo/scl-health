@@ -1,9 +1,8 @@
 # modules/pdf_parser.py
-
 import PyPDF2
 
-def parse_pdf(uploaded_pdf):
-    reader = PyPDF2.PdfReader(uploaded_pdf)
+def parse_pdf(pdf_file):
+    reader = PyPDF2.PdfReader(pdf_file)
     content = ""
     for page in reader.pages:
         content += page.extract_text()

@@ -1,85 +1,72 @@
-from dotenv import load_dotenv
-import streamlit as st
-from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.chains.question_answering import load_qa_chain
-from langchain_openai import ChatOpenAI
-from langchain_community.llms import OpenAI
-from langchain_core.output_parsers import PydanticOutputParser
-from langchain_core.messages import SystemMessage
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, HumanMessagePromptTemplate
-from langchain_community.callbacks.manager import get_openai_callback
-from pydantic import Field, BaseModel
+import streamlit as st 
+import io
+import json 
+from modules.pdf_parser import parse_pdf
+from modules.vectorstore import store_pdf_content, search_vectors
+from modules.query_handler import query_library
+from doc_handler import add_document, retrieve_document, list_documents
+from graph import get_weather, search_web
 
-from dotenv import load_dotenv
-load_dotenv()
-import os
+st.title("Webzine for SCL Health")
 
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
-os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 
-llm = ChatOpenAI(
-    openai_api_key='',
-    model_name="gpt-4o",
-    response_format={"type": "json_object"},
-)
+# Create a sidebar for navigation
+st.sidebar.title("Menu")
+options = st.sidebar.radio("Select an option", ["Upload File", "Web Search"])
 
-template = """
-{format_instructions}
----
-Subjects contained in the PDF documents: {type}
-"""
-class Response(BaseModel):
-    best_article: str = Field(description="best article you've read")
-    worst_article: str = Field(description="worst article you've read")
+if options == "Upload File":
+    st.sidebar.header("Upload File")
+    uploaded_file = st.sidebar.file_uploader("Upload a PDF", type="pdf", key="pdf_uploader")
+    prompts = ["Mathematics", "Science", "History", "Literature"]
+    prompt_selected = st.sidebar.selectbox("Select Prompt", ["Mathematics", "Science", "History", "Literature"], key="subject_select")
+    st.write(f"Selected Prompt: {prompt_selected}")
     
-parser = PydanticOutputParser(pydantic_object=Response)
-
-st.title('💬PDF Summarizer and Q/A App')
-
-pdf = st.sidebar.file_uploader("Upload your PDF File and Ask Questions", type="pdf")
-if pdf is not None:
-    
-    pdf_reader = PdfReader(pdf)
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
+    if uploaded_file:
+        file_name = uploaded_file.name
+        parsed_file = parse_pdf(uploaded_file)
+        result = store_pdf_content(parsed_file)
+        if result:
+            st.sidebar.write(result)
+            add_document("doc1", {file_name} )
+        else: st.sidebar.write("storing PDF file into vector store failed")
         
-    # split into chunks
-    text_splitter = CharacterTextSplitter(
-    separator="\n",
-    chunk_size=1000,
-    chunk_overlap=200,
-    length_function=len
-    )
-    chunks = text_splitter.split_text(text)
+    else:
+        st.sidebar.write("Please upload a PDF and select subject to get started.")
     
-    #create embeddings
-    embeddings = OpenAIEmbeddings()
-    knowledge_base = FAISS.from_texts(chunks, embeddings)
+elif options == "Web Search":
+    st.header("Web Search")
+    query = st.text_input("Enter a search query:")
+    if st.button("Search Web"):
+        if query:
+            results = search_web(query)
+            for result in results:
+                st.write(result["content"])
+        else:
+            st.write("Please enter a search query.")
     
-    # show user input
-    with st.chat_message("user"):
-        st.write("Hello World👋")
-        user_question = st.text_input("Please ask a question about your PDF here:")
-        if user_question:
-            docs = knowledge_base.similarity_search(user_question, k=2)
-            print(docs)           
-            system_message = SystemMessage(content="You are a librian to analyze PDF documents and explain the contents of the documents.")
-            human_message = HumanMessagePromptTemplate.from_template(template=template,
-                                                         input_variables=docs,
-                                                         partial_variables={
-                                                             "format_instructions": parser.get_format_instructions()})
-            st.write(human_message)
-            chat_prompt = ChatPromptTemplate.from_messages([system_message, MessagesPlaceholder(variable_name="messages")])
-            st.write(chat_prompt)
-            
-            chain = load_qa_chain(llm, chain_type="stuff")
-            with get_openai_callback() as cb:
-                response = chain.run(input_documents=docs, question=user_question)
-                print(cb)
-                
-            st.write(response)
+# Main Page content
+   
+st.header("Query the PDF Library") 
+query = st.text_input("Enter your question for your uploaded documents:") 
+if query: 
+    # Define the document content and type
+    document_content = "This is the content of the document."
+    document_type = "PDF"    
+    response = query_library(query)
+    print(response)
+    
+   
+    st.write(response.content)
+    
+    # import json
+   
+    data = response
+    list_data = list(data)
+    json_data = json.dumps(list_data, ensure_ascii=False)
+    print("this is json data")
+    print(json_data)
+    # Create a Markdown string
+       # Print the Markdown string
+    st.markdown(json_data)
+
+
