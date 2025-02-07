@@ -1,9 +1,10 @@
 # modules/pdf_parser.py
-import PyPDF2
 
+from PyPDF2 import PdfReader
 def parse_pdf(pdf_file):
-    reader = PyPDF2.PdfReader(pdf_file)
+    reader = PdfReader(pdf_file)
+    page_count = len(reader.pages)
     content = ""
     for page in reader.pages:
         content += page.extract_text()
-    return content
+    return page_count, content

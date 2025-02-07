@@ -1,5 +1,6 @@
 # import the required methods
 from typing import Literal, List
+import langgraph
 from langgraph.prebuilt import ToolNode
 from langchain_core.tools import tool
 from langgraph.graph import StateGraph, MessagesState, START, END
@@ -48,7 +49,7 @@ def call_model(state: MessagesState):
     response = llm_with_tools.invoke(messages)
     return {"messages": [response]}
 
-def call_tools(state: MessagesState) -> Literal["tools", END]:
+def call_tools(state: MessagesState) -> Literal["tools"]:
     messages = state["messages"]
     last_message = messages[-1]
     if last_message.tool_calls:

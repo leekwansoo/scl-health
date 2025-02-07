@@ -1,9 +1,8 @@
 # modules/vectorstore.py
-
-import faiss
 import numpy as np
 import pickle
 from config import VECTORSTORE_PATH, METADATA_PATH
+import faiss
 
 # Initialize FAISS index (change dim to match your embedding size)
 dim = 128
@@ -38,6 +37,7 @@ def store_pdf_content(content):
         pickle.dump(metadata, f)
     message = "Contents stored in vectoestore"
     return message
+
 
 def search_vectors(query_embedding, k=3):
     distances, indices = index.search(query_embedding, k)
