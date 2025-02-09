@@ -86,19 +86,7 @@ if query:
     document_content = "This is the content of the document."
     document_type = "PDF"    
     response = query_library(query)
-    print(response)
-   
+      
     st.write(response.content)
     
-    # import json
-   
-    data = response
-    list_data = list(data)
-    json_data = json.dumps(list_data, ensure_ascii=False)
-    print("this is json data")
-    print(json_data)
-    # Create a Markdown string
-       # Print the Markdown string
-    #st.markdown(json_data)
-
-
+    
