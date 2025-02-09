@@ -6,12 +6,11 @@ from modules.pdf_reader import generate_question, parse_pdf, generate_question_o
 from modules.vectorstore import store_pdf_content
 from modules.query_handler import query_library
 from doc_handler import add_document, retrieve_document, list_documents, check_document
-from graph import get_weather, search_web
+from graph import search_web
 from dotenv import load_dotenv
 load_dotenv()
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 st.title("Webzine for SCL Health")
-path = "data/file_uploaded"
 
 st.session_state["query_message"] = []
 st.session_state["query_file"] = []
@@ -77,11 +76,9 @@ elif options == "Query from Uploaded File":
     with open(file_name, "r", encoding="utf-8") as f:
         s = f.read()
         st.sidebar.markdown(s)
+     
     
-    
-    
-# Main Page content
-   
+# Main Page content 
 st.header("Query the PDF Library") 
 query = st.text_input("Enter your question for your uploaded documents:") 
 if query: 
