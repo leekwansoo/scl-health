@@ -1,9 +1,10 @@
 import streamlit as st
+import os
 
-st.title("Webzine for SCL Health")
 
-if "DOCUMENT" not in st.session_state: 
-    st.session_state["DOCUMENT"] = []
+
+st.session_state["DOCUMENT"] = os.listdir("uploaded")
+print(os.listdir("uploaded"))
 doc_list =[]
 #if st.session_state["DOCUMENT"] is None:
 #   st.session_state["DOCUMENT"] = {"key": ""}
@@ -30,6 +31,7 @@ def retrieve_document(doc):
 def list_documents(): 
     if st.session_state["DOCUMENT"]:
         docs = st.session_state["DOCUMENT"]
+        print(docs)
         return(docs)
     else: st.write("No documents found in 'DOCUMENT'.")
 
