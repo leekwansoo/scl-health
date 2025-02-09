@@ -2,7 +2,7 @@ import streamlit as st
 import io
 import os
 import json 
-from modules.pdf_reader import generate_question, parse_pdf, generate_question_ollama, create_query_file
+from modules.pdf_reader import generate_question, parse_pdf, create_query_file
 from modules.vectorstore import store_pdf_content
 from modules.query_handler import query_library
 from doc_handler import add_document, retrieve_document, list_documents, check_document
