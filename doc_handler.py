@@ -1,10 +1,9 @@
 import streamlit as st
 import os
 
-
-
+st.session_state["DOCUMENT"] = []
 st.session_state["DOCUMENT"] = os.listdir("uploaded")
-print(os.listdir("uploaded"))
+#print(st.session_state["DOCUMENT"])
 doc_list =[]
 #if st.session_state["DOCUMENT"] is None:
 #   st.session_state["DOCUMENT"] = {"key": ""}
