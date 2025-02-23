@@ -15,6 +15,7 @@ def answer_question(question, context):
     chat_completion = client.chat.completions.create( messages=[ {"role": "user", "content": question} ], model="gpt-4o-mini", ) 
     return chat_completion.choices[0].message['content'].strip()
 
+<<<<<<< HEAD
 import spacy
 
 def create_prompt(query):
@@ -48,3 +49,18 @@ def query_library(query):
 
 
 
+=======
+def query_library(query):
+    # Create embedding for query (replace with actual embedding model) 
+    query_embedding = np.random.rand(1, 128).astype('float32') 
+    # Search vectors 
+    results = search_vectors(query_embedding) 
+    # Formulate the prompt 
+    context = ' '.join(results) 
+    prompt = f"Given the context: {context}\n\nQ: {query}\nA:" 
+    print(context)
+    # Generate response using OpenAI 
+    chat_completion = client.chat.completions.create( messages=[ {"role": "user", "content": prompt} ], model="gpt-4o-mini", ) 
+    
+    return chat_completion.choices[0].message
+>>>>>>> 463baabe00b87aaf5a6587afce550fb7d1320324
