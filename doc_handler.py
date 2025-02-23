@@ -1,10 +1,8 @@
 import streamlit as st
 import os
-
-
-
+st.session_state["DOCUMENT"] =[]
 st.session_state["DOCUMENT"] = os.listdir("uploaded")
-print(os.listdir("uploaded"))
+print(st.session_state["DOCUMENT"])
 doc_list =[]
 #if st.session_state["DOCUMENT"] is None:
 #   st.session_state["DOCUMENT"] = {"key": ""}
@@ -18,7 +16,8 @@ def check_document(value):
         result = "exist"
         return(result)
        
-def add_document(value):         
+def add_document(value):  
+    st.session_state["DOCUMENT"] = os.listdir("uploaded")       
     st.session_state["DOCUMENT"].append(value)
     st.write(f"Document added: {value}") 
 # Function to retrieve data from DOCUMENT directory 
