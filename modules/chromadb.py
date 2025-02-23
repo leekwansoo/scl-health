@@ -40,7 +40,7 @@ def delete_documents(ids):
     return result
 
 # search for documents with query
-def search_documents(query, k):
+def search_similarity(query, k):
     result = vector_store.similarity_search(query = query, k = k)
     return result
     # return document ids[], page_content[], metadata[]
